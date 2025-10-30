@@ -2,6 +2,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 import json
 from .models import UserDetails
+from .models import ExpenseDetails
 
 #Signup API
 @csrf_exempt
@@ -30,3 +31,36 @@ def login(request):
             return JsonResponse({'message': 'Login successful', 'userId': user.id, 'userName': user.FullName}, status=200)
         except:
             return JsonResponse({'message': 'Invalid credentials'}, status=400)
+
+#Add Expense API
+@csrf_exempt
+def add_expense(request):
+    if request.method == "POST":
+        data = json.loads(request.body)
+        user_id = int(data.get('UserId'))
+        expense_date = data.get('ExpenseDate')
+        expense_item = data.get('ExpenseItem')
+        expense_cost = float(data.get('ExpenseCost'))
+
+        
+        user = UserDetails.objects.get(id=user_id)
+        try:
+            ExpenseDetails.objects.create(
+                UserId=user,
+                ExpenseDate=expense_date,
+                ExpenseItem=expense_item,
+                ExpenseCost=expense_cost
+            )
+            return JsonResponse({'message': 'Expense added successfully'}, status=201)
+        except Exception as e:
+            return JsonResponse({'message': 'Something went wrong','error': str(e)}, status=400)
+
+#Manage Expense API
+@csrf_exempt
+def manage_expense(request,user_id):
+    if request.method == "GET":
+
+        expenses = ExpenseDetails.objects.filter(UserId=user_id)
+        expense_list = list(expenses.values())
+
+        return JsonResponse(expense_list, safe=False, status=200)
