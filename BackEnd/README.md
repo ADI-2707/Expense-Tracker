@@ -265,7 +265,7 @@ Delete an existing expense record.
   - Uses fetch with DELETE method to remove the expense record
   - Shows success/error toast messages after deletion
 
-## Example: Full signup -> login -> add expense -> Manage Expense -> list expenses flow
+## Example: Full Signup -> Login -> Add Expense -> List Expenses Flow -> Manage Expense
 
 1. Register a new user (POST `/api/signup/`):
 
