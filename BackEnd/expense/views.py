@@ -64,3 +64,29 @@ def manage_expense(request,user_id):
         expense_list = list(expenses.values())
 
         return JsonResponse(expense_list, safe=False, status=200)
+    
+#Update (Edit) Expense API
+@csrf_exempt
+def update_expense(request, expense_id):
+    if request.method == "PUT":
+        data = json.loads(request.body)
+        try:
+            expense = ExpenseDetails.objects.get(id=expense_id)
+            expense.ExpenseDate = data.get('ExpenseDate', expense.ExpenseDate)
+            expense.ExpenseItem = data.get('ExpenseItem', expense.ExpenseItem)
+            expense.ExpenseCost = data.get('ExpenseCost', expense.ExpenseCost)
+            expense.save()
+            return JsonResponse({'message' : 'Expense updated successfully!'})
+        except :
+            return JsonResponse({'message' : 'Expense not found!'}, status=404)
+        
+#Delete Expense API
+@csrf_exempt
+def delete_expense(request, expense_id):
+    if request.method == "DELETE":
+        try:
+            expense = ExpenseDetails.objects.get(id=expense_id)
+            expense.delete()
+            return JsonResponse({'message' : 'Expense deleted successfully!'})
+        except :
+            return JsonResponse({'message' : 'Expense not found!'}, status=404)
