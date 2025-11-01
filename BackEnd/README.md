@@ -188,14 +188,84 @@ Retrieve all expense records for a given user.
   }
 ]
 ```
-
 - **Frontend Integration:**
   - Component: `FrontEnd/frontend/src/components/ManageExpense.js`
   - The component reads `userId` from `localStorage` and issues a GET request to `http://localhost:8000/api/manage_expense/{userId}/`.
   - Example fetch (from `ManageExpense.js`):
     - `fetch('http://localhost:8000/api/manage_expense/' + userId + '/')`, then parse JSON and render the list in a table.
+  
 
-## Example: Full signup -> login -> add expense -> list expenses flow
+### 3. Update Expense
+
+Update an existing expense record.
+
+- **URL:** `/update_expense/<int:expense_id>/` (full path usually `http://localhost:8000/api/update_expense/<expense_id>/`)
+- **Method:** `PUT`
+- **URL Example:** `http://localhost:8000/api/update_expense/1/`
+- **Request Body (JSON):**
+```json
+{
+  "ExpenseDate": "2025-11-01",
+  "ExpenseItem": "Updated Groceries",
+  "ExpenseCost": "1500.75"
+}
+```
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+```json
+{
+  "message": "Expense updated successfully"
+}
+```
+- **Error Response:**
+  - **Code:** 400
+  - **Content:**
+```json
+{
+  "message": "Error updating expense",
+  "error": "<error details>"
+}
+```
+
+- **Frontend Integration:**
+  - Component: `FrontEnd/frontend/src/components/ManageExpense.js`
+  - Updates are triggered from the edit button in the expense list
+  - Uses fetch with PUT method to update the expense record
+  - Shows success/error toast messages after update
+
+### 4. Delete Expense
+
+Delete an existing expense record.
+
+- **URL:** `/delete_expense/<int:expense_id>/` (full path usually `http://localhost:8000/api/delete_expense/<expense_id>/`)
+- **Method:** `DELETE`
+- **URL Example:** `http://localhost:8000/api/delete_expense/1/`
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+```json
+{
+  "message": "Expense deleted successfully"
+}
+```
+- **Error Response:**
+  - **Code:** 400
+  - **Content:**
+```json
+{
+  "message": "Error deleting expense",
+  "error": "<error details>"
+}
+```
+
+- **Frontend Integration:**
+  - Component: `FrontEnd/frontend/src/components/ManageExpense.js`
+  - Delete is triggered from the delete button in the expense list
+  - Uses fetch with DELETE method to remove the expense record
+  - Shows success/error toast messages after deletion
+
+## Example: Full signup -> login -> add expense -> Manage Expense -> list expenses flow
 
 1. Register a new user (POST `/api/signup/`):
 
@@ -230,4 +300,19 @@ localStorage.setItem('userName', userName);
 { "UserId": "1", "ExpenseDate": "2025-10-30", "ExpenseItem": "Groceries", "ExpenseCost": "1200.50" }
 ```
 
-4. List expenses for user (GET `/api/manage_expense/1/`): returns JSON array of the user's expenses.
+4. List expenses (GET `/api/manage_expense/1/`):
+Returns list of all expenses for the user.
+
+5. Update expense (PUT `/api/update_expense/3/`):
+```json
+{
+  "ExpenseDate": "2025-11-01",
+  "ExpenseItem": "Monthly Groceries",
+  "ExpenseCost": "1500.75"
+}
+```
+Response: `{ "message": "Expense updated successfully" }` (200)
+
+6. Delete expense (DELETE `/api/delete_expense/3/`):
+No request body needed.
+Response: `{ "message": "Expense deleted successfully" }` (200)
