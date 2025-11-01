@@ -95,7 +95,7 @@ const ManageExpense = () => {
           <i className="fas fa-tasks me-1"></i> Manage Expense
         </h2>
         <p className="text-muted">
-          Track Your <span className="text-primary">Expenses </span>Here
+          Manage Your <span className="text-primary">Expense </span>Details
         </p>
       </div>
       <div className="mx-5">

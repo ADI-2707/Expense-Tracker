@@ -1,70 +1,215 @@
-# Getting Started with Create React App
+# Daily Expense Tracker — Frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This README documents the frontend application (React) for the Daily Expense Tracker project, how its features work, how components connect to the backend API, and how to run and test the app locally.
 
-## Available Scripts
+## Table of contents
 
-In the project directory, you can run:
+- Overview
+- How it works (high level)
+- Key components and responsibilities
+- Important frontend/backend interactions (examples)
+- Local development (Windows PowerShell)
+- Useful implementation notes & recommendations
 
-### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Overview
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The frontend is a React single-page application located in `FrontEnd/frontend`. It provides UI to:
 
-### `npm test`
+- Register and login users (signup, login)
+- Add new expenses
+- View and manage (list / edit / delete) existing expenses
+- Search expenses and view reports (UI components present)
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+The app stores minimal session data in `localStorage` (user id and user name) and uses fetch() to call the Django backend API endpoints (served under `http://localhost:8000/api/`).
 
-### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## How it works (high level)
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+1. User registers with the Signup form. The frontend sends a POST request to the backend `/api/signup/` endpoint.
+2. After signup, user logs in using the Login form. The frontend sends a POST request to `/api/login/`.
+3. On successful login the backend returns `{ message, userId, userName }`. The frontend stores `userId` and `userName` in `localStorage` and redirects to the dashboard.
+4. From the dashboard the user can add expenses (POST `/api/add_expense/`) and manage expenses (GET `/api/manage_expense/{userId}/`, PUT to update, DELETE to remove).
+5. The Manage / Report components fetch data from the backend and render it in tables and lists.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Key components and responsibilities
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Files live in `FrontEnd/frontend/src/components/`.
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+- `Signup.js` — registration form. Sends POST to `/api/signup/`. On success redirects to login.
+- `Login.js` — login form. Sends POST to `/api/login/`. On success stores `userId` and `userName` in `localStorage` and redirects to the dashboard.
+- `Dashboard.js` — simple landing page after login. Reads `userName` from `localStorage`.
+- `AddExpense.js` — form to create an expense. Reads `userId` from `localStorage` and posts `{ ...formData, UserId: userId }` to `/api/add_expense/`.
+- `ManageExpense.js` — lists user's expenses. Uses `fetch('http://localhost:8000/api/manage_expense/' + userId + '/')` to get the list and renders a table. Edit/delete buttons should call update/delete endpoints (implementations to wire in the UI).
+- `ExpenseReport.js` — (present) used for search/reporting features (connect to `search_expense` endpoint when implemented).
+- `ChangePassword.js` — (present) posts `{ Email, OldPassword, NewPassword }` to `/api/change_password/` (account endpoint).
+- `Navbar.js`, `Home.js` — routing/layout components.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Important frontend/backend interactions (examples)
 
-## Learn More
+Notes: the backend expects the API base under `http://localhost:8000/api/`.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+1) Signup (example request sent by `Signup.js`)
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+POST http://localhost:8000/api/signup/
 
-### Code Splitting
+Request JSON:
+```json
+{
+  "FullName": "John Doe",
+  "Email": "john@example.com",
+  "Password": "pass123"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Success response (example): HTTP 201
+```json
+{ "message": "User registered successfully" }
+```
 
-### Analyzing the Bundle Size
+2) Login (example request sent by `Login.js`)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+POST http://localhost:8000/api/login/
 
-### Making a Progressive Web App
+Request JSON:
+```json
+{
+  "Email": "john@example.com",
+  "Password": "pass123"
+}
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+Successful response (example): HTTP 200
+```json
+{ "message": "Login successful", "userId": 1, "userName": "John Doe" }
+```
 
-### Advanced Configuration
+Frontend behavior after login (in `Login.js`):
+```js
+localStorage.setItem('userId', userId);
+localStorage.setItem('userName', userName);
+// redirect to /dashboard
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+3) Add Expense (from `AddExpense.js`)
 
-### Deployment
+POST http://127.0.0.1:8000/api/add_expense/
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Request JSON (the component adds `UserId` from localStorage):
+```json
+{
+  "UserId": "1",
+  "ExpenseDate": "2025-10-30",
+  "ExpenseItem": "Groceries",
+  "ExpenseCost": "1200.50"
+}
+```
 
-### `npm run build` fails to minify
+Successful response (example): HTTP 201
+```json
+{ "message": "Expense added successfully" }
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+4) Manage Expense (list) — `ManageExpense.js` fetches list
+
+GET http://localhost:8000/api/manage_expense/{userId}/
+
+Response (example): HTTP 200
+```json
+[
+  { "id": 3, "UserId_id": 1, "ExpenseDate": "2025-10-30", "ExpenseItem": "Groceries", "ExpenseCost": 1200.5, "NoteDate": "2025-10-30T12:34:56.789Z" },
+  ...
+]
+```
+
+5) Update Expense (what the UI should call when editing)
+
+PUT http://localhost:8000/api/update_expense/{expenseId}/
+
+Request JSON:
+```json
+{
+  "ExpenseDate": "2025-11-01",
+  "ExpenseItem": "Updated Groceries",
+  "ExpenseCost": "1500.75"
+}
+```
+
+6) Delete Expense (what the UI should call on delete)
+
+DELETE http://localhost:8000/api/delete_expense/{expenseId}/
+
+Response (example): HTTP 200
+```json
+{ "message": "Expense deleted successfully" }
+```
+
+7) Search Expense (example)
+
+POST http://localhost:8000/api/search_expense/
+
+Request JSON:
+```json
+{
+  "UserId": "1",
+  "query": "groceries",
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31"
+}
+```
+
+Response: JSON array of expenses matching the criteria (same shape as the list output).
+
+
+## Local development (Windows PowerShell)
+
+Open PowerShell and run:
+
+```powershell
+# 1. Run backend (Django) in another terminal
+# from project BackEnd folder
+cd 'C:\Users\hp\Desktop\Daily Expense Tracker\BackEnd'
+# make sure virtualenv activated if you use one, then:
+python manage.py runserver
+
+# 2. Start frontend
+cd 'C:\Users\hp\Desktop\Daily Expense Tracker\FrontEnd\frontend'
+npm install
+npm start
+```
+
+This should open the React dev server (usually on http://localhost:3000). Make sure the Django backend is running on `http://localhost:8000/`.
+
+Notes:
+- If the frontend cannot call the backend because of CORS, add and configure `django-cors-headers` in the backend to allow `http://localhost:3000`.
+- The frontend uses `fetch()` calls to `http://localhost:8000/api/...` or `http://127.0.0.1:8000/api/...` — unify this to a single base URL if needed.
+
+
+## Environment and configuration suggestions
+
+- Consider extracting the API base URL into an environment variable in the React app (`REACT_APP_API_BASE_URL`) and use it in fetch calls instead of hard-coded `http://localhost:8000/api/`.
+
+Example usage in code:
+```js
+const API_BASE = process.env.REACT_APP_API_BASE_URL || 'http://localhost:8000/api';
+fetch(`${API_BASE}/add_expense/`, { method: 'POST', ... });
+```
+
+- Enable CORS on the backend while developing:
+  - `pip install django-cors-headers`
+  - Add `corsheaders` to INSTALLED_APPS and `CorsMiddleware` to MIDDLEWARE, then set `CORS_ALLOWED_ORIGINS = ["http://localhost:3000"]`.
+
+
+## Frontend libraries observed
+
+- react-toastify — used for success/error toasts (notifications)
+- Bootstrap / Font Awesome classes used in markup (make sure CSS is loaded in `index.html` or `index.js`)
+
+
+## Troubleshooting
+
+- 401 / 400 errors on login: verify the backend is running and `Email`/`Password` fields are correct.
+- `fetch` network errors: check that both servers are running and there are no CORS blocks.
+- If the list is empty but expenses exist: check `userId` stored in `localStorage` matches the backend IDs.

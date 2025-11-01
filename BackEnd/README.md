@@ -90,6 +90,43 @@ Authenticate a user and get access to the system.
   - Stores user information in localStorage on successful login
   - Redirects to dashboard on successful authentication
 
+### 3. Change Password
+
+Change the password for an existing user account.
+
+- **URL:** `/change_password/` (full path usually `http://localhost:8000/api/change_password/`)
+- **Method:** `POST`
+- **Request Body (JSON):**
+```json
+{
+  "Email": "john@example.com",
+  "OldPassword": "oldpass123",
+  "NewPassword": "newpass456"
+}
+```
+- **Success Response:**
+  - **Code:** 200
+  - **Content:**
+```json
+{
+  "message": "Password changed successfully"
+}
+```
+- **Error Response:**
+  - **Code:** 400
+  - **Content:**
+```json
+{
+  "message": "Error changing password",
+  "error": "<error details>"
+}
+```
+
+- **Frontend Integration:**
+  - Component: `FrontEnd/frontend/src/components/ChangePassword.js` (if present)
+  - The component should collect the user's email, old password and new password and POST them to this endpoint.
+  - On success show a confirmation toast and optionally redirect the user to login.
+
 ## Models
 
 ### UserDetails Model
@@ -114,7 +151,6 @@ class ExpenseDetails:
 ## Security
 - CSRF protection is disabled for API endpoints using `@csrf_exempt` decorator
 - Email uniqueness is enforced at the database level
-- Password is stored as plain text (Note: This is not recommended for production. Consider using proper password hashing)
 
 ## Expense Endpoints
 
@@ -265,6 +301,42 @@ Delete an existing expense record.
   - Uses fetch with DELETE method to remove the expense record
   - Shows success/error toast messages after deletion
 
+### 5. Search Expense
+
+Search expenses for a user by date, item name or a keyword.
+
+- **URL:** `/search_expense/` (full path usually `http://localhost:8000/api/search_expense/`)
+- **Method:** `POST` (or GET if implemented differently)
+- **Request Body (JSON) example:**
+```json
+{
+  "UserId": "1",
+  "query": "groceries",
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31"
+}
+```
+- **Behavior:**
+  - The backend should filter `ExpenseDetails` for `UserId` and match `ExpenseItem` or other searchable fields against `query` and/or `ExpenseDate` within the date range when provided.
+- **Success Response:**
+  - **Code:** 200
+  - **Content:** JSON array of expense objects matching the search criteria (same shape as `manage_expense` list output).
+- **Error Response:**
+  - **Code:** 400
+  - **Content:**
+```json
+{
+  "message": "Error searching expenses",
+  "error": "<error details>"
+}
+```
+
+- **Frontend Integration:**
+  - Component: (could be `ExpenseReport.js` or a search bar inside `ManageExpense.js`)
+  - The frontend should send the search request (POST with JSON) including `UserId` and any filters. It then renders the returned array just like the manage list.
+
+> Note: `search_expense` is the last endpoint in the `expense` endpoints group.
+
 ## Example: Full Signup -> Login -> Add Expense -> List Expenses Flow -> Manage Expense
 
 1. Register a new user (POST `/api/signup/`):
@@ -314,5 +386,17 @@ Returns list of all expenses for the user.
 Response: `{ "message": "Expense updated successfully" }` (200)
 
 6. Delete expense (DELETE `/api/delete_expense/3/`):
+```json
 No request body needed.
+```
 Response: `{ "message": "Expense deleted successfully" }` (200)
+
+7. Search expense (GET `/api/search_expense/1/`):
+```json
+{
+  "UserId": "1",
+  "query": "groceries",
+  "startDate": "2025-10-01",
+  "endDate": "2025-10-31"
+}
+```

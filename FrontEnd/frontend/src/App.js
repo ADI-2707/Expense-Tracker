@@ -6,6 +6,8 @@ import Home from "./components/Home";
 import Dashboard from "./components/Dashboard";
 import AddExpense from "./components/AddExpense";
 import ManageExpense from "./components/ManageExpense";
+import ExpenseReport from "./components/ExpenseReport";
+import ChangePassword from "./components/ChangePassword";
 
 function App() {
   return (
@@ -19,6 +21,8 @@ function App() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/addexpense" element={<AddExpense />} />
           <Route path="/manageexpense" element={<ManageExpense />} />
+          <Route path="/expensereport" element={<ExpenseReport />} />
+          <Route path="/changepassword" element={<ChangePassword />} />
         </Routes>
       </BrowserRouter>
     </div>
