@@ -400,3 +400,7 @@ Response: `{ "message": "Expense deleted successfully" }` (200)
   "endDate": "2025-10-31"
 }
 ```
+
+## Connect with me
+- **LinkedIn:** https://www.linkedin.com/in/devadi
+- **GitHub:** https://github.com/ADI-2707
