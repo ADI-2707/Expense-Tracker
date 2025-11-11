@@ -213,3 +213,7 @@ fetch(`${API_BASE}/add_expense/`, { method: 'POST', ... });
 - 401 / 400 errors on login: verify the backend is running and `Email`/`Password` fields are correct.
 - `fetch` network errors: check that both servers are running and there are no CORS blocks.
 - If the list is empty but expenses exist: check `userId` stored in `localStorage` matches the backend IDs.
+
+## Connect with me
+- **LinkedIn:** https://www.linkedin.com/in/devadi
+- **GitHub:** https://github.com/ADI-2707
