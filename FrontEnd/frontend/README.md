@@ -2,6 +2,10 @@
 
 This README documents the frontend application (React) for the Daily Expense Tracker project, how its features work, how components connect to the backend API, and how to run and test the app locally.
 
+<p align='center'>
+<img src='assets/et1.png' width=600>
+</p>
+
 ## Table of contents
 
 - Overview
@@ -38,12 +42,52 @@ The app stores minimal session data in `localStorage` (user id and user name) an
 Files live in `FrontEnd/frontend/src/components/`.
 
 - `Signup.js` — registration form. Sends POST to `/api/signup/`. On success redirects to login.
+
+<p align='center'>
+<img src='assets/et2.png' width=600>
+</p>
+
 - `Login.js` — login form. Sends POST to `/api/login/`. On success stores `userId` and `userName` in `localStorage` and redirects to the dashboard.
+
+<p align='center'>
+<img src='assets/et3.png' width=600>
+</p>
+
 - `Dashboard.js` — simple landing page after login. Reads `userName` from `localStorage`.
+
+<p align='center'>
+<img src='assets/et4.png' width=300>
+<img src='assets/et5.png' width=300>
+</p>
+
 - `AddExpense.js` — form to create an expense. Reads `userId` from `localStorage` and posts `{ ...formData, UserId: userId }` to `/api/add_expense/`.
+
+<p align='center'>
+<img src='assets/et6.png' width=200>
+<img src='assets/et7.png' width=200>
+<img src='assets/et8.png' width=200>
+</p>
+
 - `ManageExpense.js` — lists user's expenses. Uses `fetch('http://localhost:8000/api/manage_expense/' + userId + '/')` to get the list and renders a table. Edit/delete buttons should call update/delete endpoints (implementations to wire in the UI).
+
+<p align='center'>
+<img src='assets/et9.png' width=200>
+<img src='assets/et10.png' width=200>
+<img src='assets/et11.png' width=200>
+</p>
+
 - `ExpenseReport.js` — (present) used for search/reporting features (connect to `search_expense` endpoint when implemented).
+
+<p align='center'>
+<img src='assets/et12.png' width=600>
+</p>
+
 - `ChangePassword.js` — (present) posts `{ Email, OldPassword, NewPassword }` to `/api/change_password/` (account endpoint).
+
+<p align='center'>
+<img src='assets/et13.png' width=600>
+</p>
+
 - `Navbar.js`, `Home.js` — routing/layout components.
 
 
@@ -213,3 +257,7 @@ fetch(`${API_BASE}/add_expense/`, { method: 'POST', ... });
 - 401 / 400 errors on login: verify the backend is running and `Email`/`Password` fields are correct.
 - `fetch` network errors: check that both servers are running and there are no CORS blocks.
 - If the list is empty but expenses exist: check `userId` stored in `localStorage` matches the backend IDs.
+
+## Connect With Me
+- **LinkedIn:** https://www.linkedin.com/in/devadi 
+- **GitHub:** https://github.com/ADI-2707

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 64 64" role="img" aria-label="Daily Expense Tracker">
+  <!-- Background circle -->
+  <circle cx="32" cy="32" r="30" fill="#0ea5a4"/>
+
+  <!-- Wallet body -->
+  <rect x="10" y="20" width="44" height="28" rx="4" ry="4" fill="#ffffff" opacity="0.95"/>
+  <!-- Wallet flap -->
+  <path d="M10 24h44v6c0 2.2-1.8 4-4 4H14c-2.2 0-4-1.8-4-4V24z" fill="#e6f6f5"/>
+
+  <!-- Small clasp / button -->
+  <circle cx="46" cy="34" r="2.2" fill="#0f172a"/>
+
+  <!-- Rupee symbol inside wallet -->
+  <g transform="translate(18,22) scale(1.2)" fill="none" stroke="#0f172a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
+    <!-- top horizontal -->
+    <path d="M3 4h14"/>
+    <!-- small second horizontal -->
+    <path d="M3 8h12"/>
+    <!-- curved vertical + diagonal flourish to form ₹ -->
+    <path d="M9 6c2 0 4-1 5-3 0.7-1.2 0.5-2.5-0.8-3.2C12  -1 9 0 7 2.5"/>
+    <!-- downward stroke -->
+    <path d="M8 9c0.6 2 2 5 4 7"/>
+  </g>
+</svg>
