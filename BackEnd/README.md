@@ -401,6 +401,12 @@ Response: `{ "message": "Expense deleted successfully" }` (200)
 }
 ```
 
+<<<<<<< HEAD
 ## Connect With Me
 - **LinkedIn:** https://www.linkedin.com/in/devadi 
 - **GitHub:** https://github.com/ADI-2707
+=======
+## Connect with me
+- **LinkedIn:** https://www.linkedin.com/in/devadi
+- **GitHub:** https://github.com/ADI-2707
+>>>>>>> ada76eb9d5f7558904abe03a6789399e8dcca89d

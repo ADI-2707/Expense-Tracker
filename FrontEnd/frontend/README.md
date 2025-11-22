@@ -258,6 +258,6 @@ fetch(`${API_BASE}/add_expense/`, { method: 'POST', ... });
 - `fetch` network errors: check that both servers are running and there are no CORS blocks.
 - If the list is empty but expenses exist: check `userId` stored in `localStorage` matches the backend IDs.
 
-## Connect With Me
-- **LinkedIn:** https://www.linkedin.com/in/devadi 
+## Connect with me
+- **LinkedIn:** https://www.linkedin.com/in/devadi
 - **GitHub:** https://github.com/ADI-2707
